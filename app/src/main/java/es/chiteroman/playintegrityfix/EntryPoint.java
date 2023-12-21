@@ -50,6 +50,10 @@ public class EntryPoint {
         return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().toLowerCase(Locale.ENGLISH).contains("droidguard"));
     }
 
+    protected static boolean isGMS() {
+        return Arrays.stream(Thread.currentThread().getStackTrace()).anyMatch(e -> e.getClassName().toLowerCase(Locale.ENGLISH).contains("com.google.android.gms"));
+    }
+
     private static void spoofProvider() {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");

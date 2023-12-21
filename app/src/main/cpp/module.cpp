@@ -79,11 +79,15 @@ public:
 
         auto name = env->GetStringUTFChars(args->nice_name, nullptr);
 
+        api->setOption(zygisk::DLCLOSE_MODULE_LIBRARY);
+
+        auto deny = (api->getFlags() & zygisk::PROCESS_ON_DENYLIST) != 0;
+
         if (name && strncmp(name, "com.google.android.gms", 22) == 0) {
 
             api->setOption(zygisk::FORCE_DENYLIST_UNMOUNT);
 
-            if (strcmp(name, "com.google.android.gms.unstable") == 0) {
+            if (deny || strcmp(name, "com.google.android.gms.unstable") == 0) {
 
                 int fd = api->connectCompanion();
 
@@ -93,7 +97,6 @@ public:
                 if (dexSize < 1 || jsonSize < 1) {
 
                     LOGD("Couldn't read files in memory!");
-                    api->setOption(zygisk::DLCLOSE_MODULE_LIBRARY);
 
                 } else {
 
@@ -107,9 +110,9 @@ public:
 
                 close(fd);
 
-            } else api->setOption(zygisk::DLCLOSE_MODULE_LIBRARY);
+            }
 
-        } else api->setOption(zygisk::DLCLOSE_MODULE_LIBRARY);
+        }
 
         env->ReleaseStringUTFChars(args->nice_name, name);
     }
